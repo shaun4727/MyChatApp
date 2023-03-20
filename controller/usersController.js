@@ -34,7 +34,6 @@ async function getUsers(req,res,next){
 async function addUser(req,res,next){
     let newUser;
     const hashedPassword = await bcrypt.hash(req.body.password, 10);
-    console.log(req.body.image.length)
     if(req.body.image.length > 0){
         newUser = new User({
             ...req.body,
@@ -52,11 +51,11 @@ async function addUser(req,res,next){
         res.status(200).json({
             success: true,
             response_code: 200,
-            data: {
+            user: {
                 "name":result.name,
+                "id": result._id,
                 "email": result.email,
                 "mobile": result.mobile,
-                "avatar": result.avatar,
                 "role": result.role,
                 "url": res.locals.url
             }

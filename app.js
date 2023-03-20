@@ -13,6 +13,7 @@ const cors = require("cors")
 const {notFoundHandler,errorHandler} = require("./middlewares/common/errorHandler")
 const loginRouter = require("./router/loginRouter");
 const usersRouter = require("./router/usersRouter");
+const inboxRouter = require("./router/inboxRouter");
 
 const app = express();
 dotenv.config();
@@ -28,7 +29,8 @@ mongoose.connect(process.env.MONGO_CONNECTION_STRING,{
 app.use(express.json({limit: "50mb"}));
 app.use(express.urlencoded({extended: true}));
 app.use(cors({
-    origin: `http://localhost:${process.env.PORT}`
+    origin: [`http://localhost:${process.env.PORT}`,`http://localhost:8080`,`http://localhost:8081`,`http://192.168.2.17:8081`],
+    credentials: true
 }))
 
 
@@ -47,7 +49,7 @@ app.use(cookieParser(process.env.COOKIE_SECRET));
 // routing setup
 app.use("/",loginRouter);
 app.use("/users", usersRouter);
-// app.use("/inbox", inboxRouter);
+app.use("/inbox", inboxRouter);
 
 
 //404 not found handler
