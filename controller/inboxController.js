@@ -20,6 +20,7 @@ async function getCreatorImgUrl(id){
 // get conversations
 async function getConversations(req, res, next) {
     try {
+        console.log(req.user.id)
       const conversations = await Conversation.find({
         $or: [
           { "creator.id": req.user.id },
@@ -27,7 +28,6 @@ async function getConversations(req, res, next) {
         ],
       });
 
-      
       res.status(200).json({
         success: true,
         response_code: 200,
@@ -129,6 +129,7 @@ async function getMessages(req, res, next) {
         }),
         conversation_id: req.query.id,
       });
+
     } catch (err) {
       res.status(500).json({
         error: err.message
@@ -171,7 +172,7 @@ async function sendMessage(req, res, next) {
       const result = await newMessage.save();
 
       // emit socket event
-
+      global.socket.emit("test-msg",newMessage);
 
       res.status(200).json({
         success: true,
