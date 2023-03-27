@@ -172,7 +172,7 @@ async function sendMessage(req, res, next) {
       const result = await newMessage.save();
 
       // emit socket event
-      global.socket.emit("test-msg",newMessage);
+      global.io.emit(`test-msg`,newMessage);
 
       res.status(200).json({
         success: true,

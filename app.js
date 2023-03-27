@@ -26,9 +26,7 @@ const io = new Server(httpServer, {
         credentials: true
     }
  });
-io.on("connection",(socket)=>{
-    global.socket = socket;
-})
+global.io = io;
 
 
 
