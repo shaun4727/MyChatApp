@@ -30,6 +30,8 @@ global.io = io;
 
 
 
+
+
 dotenv.config();
 
 // database connection
@@ -64,6 +66,21 @@ app.use(cookieParser(process.env.COOKIE_SECRET));
 app.use("/",loginRouter);
 app.use("/users", usersRouter);
 app.use("/inbox", inboxRouter);
+
+
+io.on("connection", (socket) => {
+    socket.emit("me",socket.id);
+
+    global.socket = socket;
+    // socket.on("callUser", (payload)=>{
+    //     socket.emit(`call user-${payload.userToCall}`, {signal: payload.signalData, from: payload.from, name:payload.name})
+        
+    // })
+
+    // socket.on("answer call", (data) => {
+        // io.to(data.to).emit("callAccepted");
+    // }, data.signal)
+});
 
 
 //404 not found handler

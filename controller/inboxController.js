@@ -20,7 +20,7 @@ async function getCreatorImgUrl(id){
 // get conversations
 async function getConversations(req, res, next) {
     try {
-        console.log(req.user.id)
+       
       const conversations = await Conversation.find({
         $or: [
           { "creator.id": req.user.id },
@@ -44,6 +44,7 @@ async function getConversations(req, res, next) {
                     name: conversation.participant.name,
                     url: conversation.participant.url
                 },
+                last_msg: await Message.find({"conversation_id":conversation._id}).sort({"createdAt":-1}),
                 created_at: conversation.createdAt,
             }
         }))
@@ -57,7 +58,12 @@ async function getConversations(req, res, next) {
 // add conversation
 async function addConversation(req,res,next){
     try{
-        const existingUser = await Conversation.find({"creator.id":req.user.id});
+        const existingUser = await Conversation.find({
+            $or: [
+                {"creator.id":req.user.id,"participant.id":req.body.id},
+                {"creator.id":req.body.id,"participant.id":req.user.id},
+              ],
+        });
         const newConversation = new Conversation({
             creator:{
                 id: req.user.id,
@@ -80,6 +86,7 @@ async function addConversation(req,res,next){
                     id: result._id,
                     creator: result.creator,
                     participant: result.participant,
+                    last_msg: null,
                     created_at: result.createdAt
                 }
               });
@@ -173,6 +180,7 @@ async function sendMessage(req, res, next) {
 
       // emit socket event
       global.io.emit(`test-msg`,newMessage);
+
 
       res.status(200).json({
         success: true,
